@@ -12,6 +12,7 @@ fastapi = "^0.95.1"
 sqlalchemy = "^2.0.13"
 asyncpg = "^0.27.0"
 uvicorn = "^0.22.0"
+httpx = "^0.24.0"
 
 
 [tool.poetry.group.dev.dependencies]
