@@ -1,0 +1,23 @@
+[tool.poetry]
+name = "miller-challenge"
+version = "0.1.0"
+description = ""
+authors = ["Alessio Izzo <alessio.izzo86@gmail.com>"]
+readme = "README.md"
+packages = [{include = "miller_challenge"}]
+
+[tool.poetry.dependencies]
+python = "^3.11"
+fastapi = "^0.95.1"
+sqlalchemy = "^2.0.13"
+asyncpg = "^0.27.0"
+uvicorn = "^0.22.0"
+
+
+[tool.poetry.group.dev.dependencies]
+pytest = "^7.3.1"
+pytest-asyncio = "^0.21.0"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
