@@ -98,6 +98,19 @@ async def login_for_access_token(
     return {"access_token": access_token, "token_type": "bearer"}
 
 
+@router.post("/signup", response_model=Token)
+async def signup_for_access_token(
+        form_data: Annotated[OAuth2PasswordRequestForm, Depends()],
+        db_session: AsyncSession = Depends(get_session),
+):
+    user = await user_repo.add_user(db_session, form_data.username, get_password_hash(form_data.password))
+    access_token_expires = timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
+    access_token = create_access_token(
+        data={"sub": user.username}, expires_delta=access_token_expires
+    )
+    return {"access_token": access_token, "token_type": "bearer"}
+
+
 @router.get("/users/me/", response_model=User)
 async def read_users_me(
         current_user: Annotated[User, Depends(get_current_active_user)]
