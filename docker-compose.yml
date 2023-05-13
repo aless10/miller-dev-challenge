@@ -33,3 +33,14 @@ services:
     volumes:
       - "./data/db:/var/lib/postgresql/data"
 
+  pg-admin:
+    image: dpage/pgadmin4
+    restart: unless-stopped
+    shm_size: '256mb'
+    ports:
+      - "5556:80"
+    environment:
+      - PGADMIN_DEFAULT_EMAIL=alessio.izzo@miller.com
+      - PGADMIN_DEFAULT_PASSWORD=password
+
+
