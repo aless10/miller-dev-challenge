@@ -1,8 +1,12 @@
 from fastapi import APIRouter
 
-from . import status
+from . import status, auth
 
 api_router = APIRouter()
 api_router.include_router(
     status.router, prefix="/status", tags=["status"]
+)
+
+api_router.include_router(
+    auth.router, prefix="", tags=["auth"]
 )
