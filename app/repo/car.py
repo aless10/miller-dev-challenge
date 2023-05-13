@@ -19,18 +19,16 @@ async def get_car(db_session: AsyncSession, car_id: str) -> Car | None:
 
 async def add_car(db_session: AsyncSession, licence_plate: str, owner: str, daily_price: float) -> Car:
     car = CarOrm(licence_plate=licence_plate, owner=owner, daily_price=daily_price)
-    transaction = await db_session.begin_nested()
     db_session.add(car)
-    await transaction.commit()
+    await db_session.commit()
     await db_session.refresh(car)
     return Car.from_orm(car)
 
 
 async def update_car(db_session: AsyncSession, car_id: str, new_daily_price: float) -> Car:
     query = update(CarOrm).where(CarOrm.id == car_id).values(daily_price=new_daily_price)
-    transaction = await db_session.begin_nested()
     await db_session.execute(query)
-    await transaction.commit()
+    await db_session.commit()
     updated_car = await get_car(db_session, car_id)
     await db_session.refresh(updated_car)
     return Car.from_orm(updated_car)
