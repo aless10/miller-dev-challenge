@@ -5,8 +5,11 @@ from fastapi import Depends, HTTPException, status, APIRouter
 from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
 from jose import JWTError, jwt
 from passlib.context import CryptContext
+from sqlalchemy.ext.asyncio import AsyncSession
 
+from app.db.session import get_session
 from app.model.user import TokenData, User, Token
+from app.repo import user as user_repo
 
 router = APIRouter()
 
@@ -17,13 +20,6 @@ oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
 SECRET_KEY = "09d25e094faa6ca2556c818166b7a9563b93f7099f6f0f4caa6cf63b88e8d3e7"
 ALGORITHM = "HS256"
 ACCESS_TOKEN_EXPIRE_MINUTES = 30
-
-fake_users_db = {
-    "johndoe": {
-        "username": "johndoe",
-        "password": "$2b$12$EixZaYVK1fsbw1ZfbX3OXePaWxn96p36WQoeG6Lruj3vjPGga31lW",
-    }
-}
 
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
@@ -36,14 +32,8 @@ def get_password_hash(password):
     return pwd_context.hash(password)
 
 
-def get_user(db, username: str) -> User | None:
-    if username in db:
-        user_dict = db[username]
-        return User(**user_dict)
-
-
-def authenticate_user(fake_db, username: str, password: str) -> User | None:
-    user = get_user(fake_db, username)
+async def authenticate_user(db_session, username: str, password: str) -> User | None:
+    user = await user_repo.get_user(db_session, username)
     if not user:
         return
     if not verify_password(password, user.password):
@@ -62,7 +52,8 @@ def create_access_token(data: dict, expires_delta: timedelta | None = None):
     return encoded_jwt
 
 
-async def get_current_user(token: Annotated[str, Depends(oauth2_scheme)]):
+async def get_current_user(token: Annotated[str, Depends(oauth2_scheme)],
+                           db_session: AsyncSession = Depends(get_session)):
     credentials_exception = HTTPException(
         status_code=status.HTTP_401_UNAUTHORIZED,
         detail="Could not validate credentials",
@@ -76,7 +67,7 @@ async def get_current_user(token: Annotated[str, Depends(oauth2_scheme)]):
         token_data = TokenData(username=username)
     except JWTError:
         raise credentials_exception
-    user = get_user(fake_users_db, username=token_data.username)
+    user = await user_repo.get_user(db_session, username=token_data.username)
     if user is None:
         raise credentials_exception
     return user
@@ -90,9 +81,10 @@ async def get_current_active_user(
 
 @router.post("/token", response_model=Token)
 async def login_for_access_token(
-        form_data: Annotated[OAuth2PasswordRequestForm, Depends()]
+        form_data: Annotated[OAuth2PasswordRequestForm, Depends()],
+        db_session: AsyncSession = Depends(get_session),
 ):
-    user = authenticate_user(fake_users_db, form_data.username, form_data.password)
+    user = await authenticate_user(db_session, form_data.username, form_data.password)
     if not user:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,

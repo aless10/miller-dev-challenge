@@ -17,6 +17,9 @@ class User(BaseModel):
     username: str
     password: str
 
+    class Config:
+        orm_mode = True
+
 
 class UserOrm(Base):
     __tablename__ = "user"
