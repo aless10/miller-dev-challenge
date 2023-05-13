@@ -16,4 +16,5 @@ async def add_user(db_session: AsyncSession, username: str, password) -> User:
     transaction = await db_session.begin_nested()
     db_session.add(user)
     await transaction.commit()
+    await db_session.refresh(user)
     return User.from_orm(user)
