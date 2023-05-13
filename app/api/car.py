@@ -2,6 +2,7 @@ from typing import Annotated
 
 from fastapi import Depends, HTTPException, status, APIRouter
 from sqlalchemy.ext.asyncio import AsyncSession
+from starlette.status import HTTP_201_CREATED, HTTP_204_NO_CONTENT
 
 from app.api.auth import get_current_active_user
 from app.db.session import get_session
@@ -20,18 +21,16 @@ async def get_cars(
     return await car_repo.get_cars(db_session)
 
 
-@router.post("")
+@router.post("", response_model=Car, status_code=HTTP_201_CREATED)
 async def add_car(
         car: CarInput,
         current_user: Annotated[User, Depends(get_current_active_user)],
         db_session: AsyncSession = Depends(get_session),
 ):
-    print(car)
-    new_car = await car_repo.add_car(db_session, car.license_plate, current_user.username, car.daily_price)
-    return new_car
+    return await car_repo.add_car(db_session, car.license_plate, current_user.username, car.daily_price)
 
 
-@router.put("/update/{car_id}")
+@router.put("/update/{car_id}", response_model=Car)
 async def update_car(
         car_id: str,
         car: CarInput,
@@ -42,7 +41,7 @@ async def update_car(
     return
 
 
-@router.delete("/delete/{car_id}")
+@router.delete("/delete/{car_id}", status_code=HTTP_204_NO_CONTENT)
 async def delete_car(
         car_id: str,
         current_user: Annotated[User, Depends(get_current_active_user)],
