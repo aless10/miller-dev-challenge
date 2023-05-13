@@ -7,6 +7,11 @@ from .base import Base
 from .user import UserOrm
 
 
+class CarInput(BaseModel):
+    license_plate: str
+    daily_price: float
+
+
 class Car(BaseModel):
     id: str
     license_plate: str

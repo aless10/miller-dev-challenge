@@ -5,7 +5,7 @@ from app.model.car import Car, CarOrm
 
 
 async def get_cars(db_session: AsyncSession) -> list[Car]:
-    query = select(CarOrm).all()
+    query = select(CarOrm)
     query_result = await db_session.execute(query)
     return [Car.from_orm(getattr(row, CarOrm.__name__)) for row in query_result]
 
@@ -17,8 +17,8 @@ async def get_car(db_session: AsyncSession, car_id: str) -> Car | None:
     return Car.from_orm(getattr(result, CarOrm.__name__)) if result is not None else None
 
 
-async def add_car(db_session: AsyncSession, licence_plate: str, owner: str, daily_price: float) -> Car:
-    car = CarOrm(licence_plate=licence_plate, owner=owner, daily_price=daily_price)
+async def add_car(db_session: AsyncSession, license_plate: str, owner: str, daily_price: float) -> Car:
+    car = CarOrm(license_plate=license_plate, owner=owner, daily_price=daily_price)
     db_session.add(car)
     await db_session.commit()
     await db_session.refresh(car)
@@ -30,7 +30,6 @@ async def update_car(db_session: AsyncSession, car_id: str, new_daily_price: flo
     await db_session.execute(query)
     await db_session.commit()
     updated_car = await get_car(db_session, car_id)
-    await db_session.refresh(updated_car)
     return Car.from_orm(updated_car)
 
 
