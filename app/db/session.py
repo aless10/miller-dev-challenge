@@ -1,10 +1,13 @@
+import os
 from collections.abc import AsyncGenerator
 
 from sqlalchemy.ext.asyncio import AsyncSession
 
-connector = DBConnector(settings.DB_URL.get_secret_value())
+from .db import Db
+
+db_engine = Db(os.environ['DATABASE_URL'])
 
 
 async def get_session() -> AsyncGenerator[AsyncSession, None]:
-    async with connector.get_session() as session:
+    async with db_engine.get_session() as session:
         yield session
