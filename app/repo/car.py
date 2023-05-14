@@ -17,6 +17,13 @@ async def get_car(db_session: AsyncSession, car_id: str) -> Car | None:
     return Car.from_orm(getattr(result, CarOrm.__name__)) if result is not None else None
 
 
+async def get_car_by_license(db_session: AsyncSession, license_plate: str) -> Car | None:
+    query = select(CarOrm).where(CarOrm.license_plate == license_plate)
+    query_result = await db_session.execute(query)
+    result = query_result.unique().first()
+    return Car.from_orm(getattr(result, CarOrm.__name__)) if result is not None else None
+
+
 async def add_car(
         db_session: AsyncSession,
         license_plate: str,
@@ -46,8 +53,8 @@ async def update_car(
         new_pick_up_place: str,
         new_put_down_place: str,
 ) -> Car | None:
-    query = update(CarOrm)\
-        .where(CarOrm.id == car_id, CarOrm.owner == username)\
+    query = update(CarOrm) \
+        .where(CarOrm.id == car_id, CarOrm.owner == username) \
         .values(
         daily_price=new_daily_price,
         pick_up_place=new_pick_up_place,
@@ -65,5 +72,3 @@ async def delete_car(db_session: AsyncSession, username: str, car_id: str) -> No
     query = delete(CarOrm).where(CarOrm.id == car_id, CarOrm.owner == username)
     await db_session.execute(query)
     await db_session.commit()
-
-

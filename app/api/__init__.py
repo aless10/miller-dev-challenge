@@ -1,6 +1,6 @@
 from fastapi import APIRouter
 
-from . import status, auth, car
+from . import status, auth, car, share_request
 
 api_router = APIRouter()
 api_router.include_router(
@@ -14,3 +14,8 @@ api_router.include_router(
 api_router.include_router(
     car.router, prefix="/cars", tags=["cars"]
 )
+
+api_router.include_router(
+    share_request.router, prefix="/requests", tags=["requests"]
+)
+

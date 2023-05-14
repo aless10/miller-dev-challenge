@@ -4,6 +4,7 @@ from collections.abc import Generator, AsyncGenerator
 
 import pytest
 import pytest_asyncio
+from sqlalchemy import text
 from sqlalchemy.ext.asyncio import AsyncSession
 from starlette.testclient import TestClient
 
@@ -40,4 +41,38 @@ async def get_test_db_session():
 async def db_session() -> AsyncGenerator[AsyncSession, None]:
     session_maker = get_test_db_session()
     async for async_sqlite_session in session_maker:
+        yield async_sqlite_session
+
+
+@pytest_asyncio.fixture(scope="session")
+async def db_session_no_car() -> AsyncGenerator[AsyncSession, None]:
+    session_maker = get_test_db_session()
+    async for async_sqlite_session in session_maker:
+        await async_sqlite_session.execute(
+            text("""
+                    INSERT INTO user (username, password)
+                    VALUES ('test_user', 'testpassword');
+                    """)
+        )
+        await async_sqlite_session.commit()
+        yield async_sqlite_session
+
+
+@pytest_asyncio.fixture(scope="session")
+async def db_session_car() -> AsyncGenerator[AsyncSession, None]:
+    session_maker = get_test_db_session()
+    async for async_sqlite_session in session_maker:
+        await async_sqlite_session.execute(
+            text("""
+            INSERT INTO user (username, password)
+            VALUES ('test_user_car', 'testpassword');
+            """)
+        )
+        await async_sqlite_session.execute(
+            text("""
+                    INSERT INTO car (id, license_plate, owner, daily_price, pick_up_place, put_down_place)
+                    VALUES ('10866d4d-eee1-4c4e-bab7-885eb9d05f10', 'AB123CD', 'test_user_car', 10.0, 'Here', 'There');
+                    """)
+        )
+        await async_sqlite_session.commit()
         yield async_sqlite_session
