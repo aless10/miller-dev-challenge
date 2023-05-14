@@ -27,7 +27,14 @@ async def add_car(
         current_user: Annotated[User, Depends(get_current_active_user)],
         db_session: AsyncSession = Depends(get_session),
 ):
-    return await car_repo.add_car(db_session, car.license_plate, current_user.username, car.daily_price)
+    return await car_repo.add_car(
+        db_session,
+        car.license_plate,
+        current_user.username,
+        car.daily_price,
+        car.pick_up_place,
+        car.put_down_place
+    )
 
 
 @router.put("/update/{car_id}", status_code=HTTP_204_NO_CONTENT)
@@ -37,7 +44,14 @@ async def update_car(
         current_user: Annotated[User, Depends(get_current_active_user)],
         db_session: AsyncSession = Depends(get_session),
 ):
-    await car_repo.update_car(db_session, current_user.username, car_id, car.daily_price)
+    await car_repo.update_car(
+        db_session,
+        current_user.username,
+        car_id,
+        car.daily_price,
+        car.pick_up_place,
+        car.put_down_place
+    )
     return
 
 

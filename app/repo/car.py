@@ -17,16 +17,42 @@ async def get_car(db_session: AsyncSession, car_id: str) -> Car | None:
     return Car.from_orm(getattr(result, CarOrm.__name__)) if result is not None else None
 
 
-async def add_car(db_session: AsyncSession, license_plate: str, owner: str, daily_price: float) -> Car:
-    car = CarOrm(license_plate=license_plate, owner=owner, daily_price=daily_price)
+async def add_car(
+        db_session: AsyncSession,
+        license_plate: str,
+        owner: str,
+        daily_price: float,
+        pick_up_place: str,
+        put_down_place: str
+) -> Car:
+    car = CarOrm(
+        license_plate=license_plate,
+        owner=owner,
+        daily_price=daily_price,
+        pick_up_place=pick_up_place,
+        put_down_place=put_down_place
+    )
     db_session.add(car)
     await db_session.commit()
     await db_session.refresh(car)
     return Car.from_orm(car)
 
 
-async def update_car(db_session: AsyncSession, username: str, car_id: str, new_daily_price: float) -> Car | None:
-    query = update(CarOrm).where(CarOrm.id == car_id, CarOrm.owner == username).values(daily_price=new_daily_price)
+async def update_car(
+        db_session: AsyncSession,
+        username: str,
+        car_id: str,
+        new_daily_price: float,
+        new_pick_up_place: str,
+        new_put_down_place: str,
+) -> Car | None:
+    query = update(CarOrm)\
+        .where(CarOrm.id == car_id, CarOrm.owner == username)\
+        .values(
+        daily_price=new_daily_price,
+        pick_up_place=new_pick_up_place,
+        put_down_place=new_put_down_place,
+    )
     result = await db_session.execute(query)
     if result.rowcount > 0:
         await db_session.commit()

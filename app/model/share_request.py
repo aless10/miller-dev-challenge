@@ -7,20 +7,9 @@ from .base import Base
 from .user import UserOrm
 
 
-class CarInput(BaseModel):
+class ShareRequestInput(BaseModel):
     license_plate: str
-    daily_price: float
-    pick_up_place: str
-    put_down_place: str
-
-
-class Car(BaseModel):
-    id: str
-    license_plate: str
-    owner: str
-    daily_price: float
-    pick_up_place: str
-    put_down_place: str
+    days: int
 
     class Config:
         orm_mode = True
@@ -32,5 +21,3 @@ class CarOrm(Base):
     license_plate = Column(String(200), nullable=False, primary_key=True)
     owner = Column(String(200), ForeignKey(UserOrm.username), nullable=False)
     daily_price = Column(Float(), nullable=False)
-    pick_up_place = Column(String(200), nullable=False)
-    put_down_place = Column(String(200), nullable=False)
