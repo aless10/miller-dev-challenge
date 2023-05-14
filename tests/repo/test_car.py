@@ -26,12 +26,26 @@ async def test_add_car(db_session, add_user):
 @pytest.mark.asyncio
 async def test_update_car(db_session, add_user):
     car = await car_repo.add_car(db_session, license_plate='AB123CD', owner='test_user', daily_price=10)
-    updated_car = await car_repo.update_car(db_session, car_id=car.id, new_daily_price=12)
+    updated_car = await car_repo.update_car(db_session, username='test_user', car_id=car.id, new_daily_price=12)
     assert updated_car.daily_price == 12
+
+
+@pytest.mark.asyncio
+async def test_update_car_different_owner(db_session, add_user):
+    car = await car_repo.add_car(db_session, license_plate='AB123CD', owner='test_user', daily_price=10)
+    updated_car = await car_repo.update_car(db_session, username='another-user', car_id=car.id, new_daily_price=12)
+    assert updated_car is None
 
 
 @pytest.mark.asyncio
 async def test_delete_car(db_session, add_user):
     car = await car_repo.add_car(db_session, license_plate='AB123CD', owner='test_user', daily_price=10)
-    await car_repo.delete_car(db_session, car_id=car.id)
+    await car_repo.delete_car(db_session, car_id=car.id, username='test_user')
     assert await car_repo.get_car(db_session, car_id=car.id) is None
+
+
+@pytest.mark.asyncio
+async def test_delete_car_different_owner(db_session, add_user):
+    car = await car_repo.add_car(db_session, license_plate='AB123CD', owner='test_user', daily_price=10)
+    await car_repo.delete_car(db_session, car_id=car.id, username='another_user')
+    assert await car_repo.get_car(db_session, car_id=car.id) is not None

@@ -30,14 +30,14 @@ async def add_car(
     return await car_repo.add_car(db_session, car.license_plate, current_user.username, car.daily_price)
 
 
-@router.put("/update/{car_id}", response_model=Car)
+@router.put("/update/{car_id}", status_code=HTTP_204_NO_CONTENT)
 async def update_car(
         car_id: str,
         car: CarInput,
         current_user: Annotated[User, Depends(get_current_active_user)],
         db_session: AsyncSession = Depends(get_session),
 ):
-    await car_repo.update_car(db_session, car_id, car.daily_price)
+    await car_repo.update_car(db_session, current_user.username, car_id, car.daily_price)
     return
 
 
@@ -47,5 +47,5 @@ async def delete_car(
         current_user: Annotated[User, Depends(get_current_active_user)],
         db_session: AsyncSession = Depends(get_session),
 ):
-    await car_repo.delete_car(db_session, car_id)
+    await car_repo.delete_car(db_session, current_user.username, car_id)
     return

@@ -25,16 +25,19 @@ async def add_car(db_session: AsyncSession, license_plate: str, owner: str, dail
     return Car.from_orm(car)
 
 
-async def update_car(db_session: AsyncSession, car_id: str, new_daily_price: float) -> Car:
-    query = update(CarOrm).where(CarOrm.id == car_id).values(daily_price=new_daily_price)
+async def update_car(db_session: AsyncSession, username: str, car_id: str, new_daily_price: float) -> Car | None:
+    query = update(CarOrm).where(CarOrm.id == car_id, CarOrm.owner == username).values(daily_price=new_daily_price)
+    result = await db_session.execute(query)
+    if result.rowcount > 0:
+        await db_session.commit()
+        updated_car = await get_car(db_session, car_id)
+        return Car.from_orm(updated_car)
+    return
+
+
+async def delete_car(db_session: AsyncSession, username: str, car_id: str) -> None:
+    query = delete(CarOrm).where(CarOrm.id == car_id, CarOrm.owner == username)
     await db_session.execute(query)
     await db_session.commit()
-    updated_car = await get_car(db_session, car_id)
-    return Car.from_orm(updated_car)
 
 
-async def delete_car(db_session: AsyncSession, car_id: str) -> None:
-    query = delete(CarOrm).where(CarOrm.id == car_id)
-    transaction = await db_session.begin_nested()
-    await db_session.execute(query)
-    await transaction.commit()
