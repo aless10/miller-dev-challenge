@@ -492,22 +492,6 @@ pluggy = ">=0.12,<2.0"
 testing = ["argcomplete", "attrs (>=19.2.0)", "hypothesis (>=3.56)", "mock", "nose", "pygments (>=2.7.2)", "requests", "xmlschema"]
 
 [[package]]
-name = "pytest-async-sqlalchemy"
-version = "0.2.0"
-description = "Database testing fixtures using the SQLAlchemy asyncio API"
-category = "dev"
-optional = false
-python-versions = ">=3.6"
-files = [
-    {file = "pytest-async-sqlalchemy-0.2.0.tar.gz", hash = "sha256:0dcf80fdff1ea0046834cff2bc100c82d159e45a7ae21545a6ba9119a962b9d7"},
-    {file = "pytest_async_sqlalchemy-0.2.0-py3-none-any.whl", hash = "sha256:60d7159f43d21e79d7051841fd2d6e094b7267ddc8d7192daea597afca938b12"},
-]
-
-[package.dependencies]
-pytest = ">=6.0.0"
-sqlalchemy = ">=1.4.0"
-
-[[package]]
 name = "pytest-asyncio"
 version = "0.21.0"
 description = "Pytest support for asyncio"
@@ -732,4 +716,4 @@ standard = ["colorama (>=0.4)", "httptools (>=0.5.0)", "python-dotenv (>=0.13)",
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.11"
-content-hash = "9dfcb8df0228f265884cfe5e06792072dd1384a4bde8a79d1eca50af36f989d4"
+content-hash = "d27b8ab6cf43e50103aba52b5b3ffb933734faf511ac608ccbbf5a26ee62378a"

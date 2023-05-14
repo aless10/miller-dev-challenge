@@ -23,5 +23,5 @@ class User(BaseModel):
 
 class UserOrm(Base):
     __tablename__ = "user"
-    username = Column(String(200), nullable=False, primary_key=True)
+    username = Column(String(200), nullable=False, primary_key=True, unique=True)
     password = Column(String(200), nullable=False)
