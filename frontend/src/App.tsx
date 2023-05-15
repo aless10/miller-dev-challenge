@@ -1,20 +1,14 @@
-// @ts-ignore
 import React from "react";
-// @ts-ignore
 import { Route, BrowserRouter as Router, Routes } from "react-router-dom";
 import "./App.css";
-// @ts-ignore
-import StickyFooter from "./components/Footer";
+import Footer from "./components/Footer";
 import { AuthContext, TokenContext } from "./Context";
 import Header from "./components/Header";
 import ProtectedRoute from "./components/ProtectedRoute";
 import Cookies from "js-cookie";
 import Login from "./components/Login";
 import Signup from "./components/Signup";
-
-const Home = () => {
-  return <h1>home</h1>;
-};
+import Home from "./components/Home";
 
 const Profile = () => {
   return <h1>Profile</h1>;
@@ -40,7 +34,7 @@ function App() {
       <TokenContext.Provider value={{ token, setToken }}>
         <Router>
           <main className="App">
-            <Header />
+            {auth && <Header />}
             <Routes>
               <Route element={<ProtectedRoute />}>
                 <Route path="" element={<Home />} />
@@ -50,7 +44,7 @@ function App() {
               <Route path="/signup" element={<Signup />} />
             </Routes>
           </main>
-          <StickyFooter />
+          <Footer />
         </Router>
       </TokenContext.Provider>
     </AuthContext.Provider>
