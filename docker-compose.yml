@@ -5,10 +5,10 @@ services:
     restart: unless-stopped
     build:
       context: .
-      dockerfile: Dockerfile
+      dockerfile: Dockerfile.backend
     environment:
-     - DATABASE_URL=postgresql+asyncpg://admin:P455w0rd@db:5432
-     - SECRET_KEY=09d25e094faa6ca2556c818166b7a9563b93f7099f6f0f4caa6cf63b88e8d3e7
+      - DATABASE_URL=postgresql+asyncpg://admin:P455w0rd@db:5432
+      - SECRET_KEY=09d25e094faa6ca2556c818166b7a9563b93f7099f6f0f4caa6cf63b88e8d3e7
     volumes:
       - "./app:/home/app"
       - "./scripts:/home/scripts"
@@ -35,9 +35,12 @@ services:
     volumes:
       - "./data/db:/var/lib/postgresql/data"
 
-  frontend:
-    image: nginx
+  web_server:
     container_name: web_server
+    build:
+      context: .
+      dockerfile: Dockerfile.frontend
+    tty: true
     ports:
       - "80:80"
     volumes:
@@ -48,9 +51,9 @@ services:
   pg-admin:
     image: dpage/pgadmin4
     restart: unless-stopped
-    shm_size: '256mb'
+    shm_size: "256mb"
     ports:
       - "5556:80"
     environment:
-      - PGADMIN_DEFAULT_EMAIL=alessio.izzo@miller.com
+      - PGADMIN_DEFAULT_EMAIL=admin@miller.com
       - PGADMIN_DEFAULT_PASSWORD=password

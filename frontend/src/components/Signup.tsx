@@ -1,13 +1,13 @@
 import { FormEvent, useContext, useState } from "react";
 import { Navigate } from "react-router-dom";
 import { AuthContext, TokenContext } from "../Context";
-import { login } from "../lib/requests";
+import { signup } from "../lib/requests";
 import Cookies from "js-cookie";
 
-function Login() {
+function Signup() {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
-  const { token, setToken } = useContext(TokenContext);
+  const { setToken } = useContext(TokenContext);
   const { auth, setAuth } = useContext(AuthContext);
 
   const handleSubmit = async (
@@ -16,11 +16,15 @@ function Login() {
     e: FormEvent
   ) => {
     e.preventDefault();
-    const response = await login(username, password);
+    const response = await signup(username, password);
     console.log(response);
-    setAuth(true);
-    Cookies.set("access_token", response.access_token);
-    setToken(response.access_token);
+    if (response.access_token !== undefined) {
+      setAuth(true);
+      Cookies.set("access_token", response.access_token);
+      setToken(response.access_token);
+    } else {
+      alert(response.detail);
+    }
   };
 
   if (auth) {
@@ -36,7 +40,7 @@ function Login() {
             alt="Your Company"
           />
           <h2 className="mt-10 text-center text-2xl font-bold leading-9 tracking-tight text-gray-900">
-            Sign in to your account
+            Create a new account
           </h2>
         </div>
 
@@ -61,7 +65,6 @@ function Login() {
                   id="username"
                   name="username"
                   type="username"
-                  autoComplete="username"
                   onChange={(e) => setUsername(e.target.value)}
                   required
                   className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
@@ -96,18 +99,18 @@ function Login() {
                 type="submit"
                 className="flex w-full justify-center rounded-md bg-indigo-600 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
               >
-                Sign in
+                Sign up
               </button>
             </div>
           </form>
 
           <p className="mt-10 text-center text-sm text-gray-500">
-            Not a member?{" "}
+            Already a member?{" "}
             <a
-              href="/signup"
+              href="/login"
               className="font-semibold leading-6 text-indigo-600 hover:text-indigo-500"
             >
-              Signup
+              Signin
             </a>
           </p>
         </div>
@@ -116,4 +119,4 @@ function Login() {
   );
 }
 
-export default Login;
+export default Signup;

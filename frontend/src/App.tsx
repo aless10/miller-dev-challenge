@@ -1,30 +1,26 @@
 // @ts-ignore
-import React from 'react'
+import React from "react";
 // @ts-ignore
-import { Route, BrowserRouter as Router, Routes } from 'react-router-dom'
-import './App.css'
+import { Route, BrowserRouter as Router, Routes } from "react-router-dom";
+import "./App.css";
 // @ts-ignore
-import StickyFooter from './components/Footer'
-import { AuthContext, TokenContext } from './Context';
-import Header from './components/Header'
-import ProtectedRoute from './components/ProtectedRoute'
+import StickyFooter from "./components/Footer";
+import { AuthContext, TokenContext } from "./Context";
+import Header from "./components/Header";
+import ProtectedRoute from "./components/ProtectedRoute";
 import Cookies from "js-cookie";
-import Login from './components/Login';
+import Login from "./components/Login";
+import Signup from "./components/Signup";
 
 const Home = () => {
-  return(
-      <h1>home</h1>
-  )
-}
+  return <h1>home</h1>;
+};
 
 const Profile = () => {
-  return(
-      <h1>Profile</h1>
-  )
-}
+  return <h1>Profile</h1>;
+};
 
 function App() {
-
   const [auth, setAuth] = React.useState(false);
   const [token, setToken] = React.useState("");
 
@@ -39,26 +35,26 @@ function App() {
     readCookie();
   }, []);
 
-
   return (
-      <AuthContext.Provider value={{ auth, setAuth }}>
-        <TokenContext.Provider value={{ token, setToken }}>
+    <AuthContext.Provider value={{ auth, setAuth }}>
+      <TokenContext.Provider value={{ token, setToken }}>
         <Router>
           <main className="App">
-            <Header/>
+            <Header />
             <Routes>
-                <Route element={<ProtectedRoute />}>
-                  <Route path="" element={<Home />} />
-                  <Route path="profile" element={<Profile />} />
-                </Route>
-              <Route path='/login' element={<Login />}/>
+              <Route element={<ProtectedRoute />}>
+                <Route path="" element={<Home />} />
+                <Route path="profile" element={<Profile />} />
+              </Route>
+              <Route path="/login" element={<Login />} />
+              <Route path="/signup" element={<Signup />} />
             </Routes>
           </main>
-          <StickyFooter/>
+          <StickyFooter />
         </Router>
-        </TokenContext.Provider>
-      </AuthContext.Provider>
-  )
+      </TokenContext.Provider>
+    </AuthContext.Provider>
+  );
 }
 
-export default App
+export default App;
