@@ -1,32 +1,55 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+// @ts-ignore
+import React from 'react'
+// @ts-ignore
+import { Route, BrowserRouter as Router, Routes } from 'react-router-dom'
+import './App.css'
+// @ts-ignore
+import StickyFooter from './components/Footer'
+import { AuthContext, TokenContext } from './Context';
+import Header from './components/Header'
+import ProtectedRoute from './components/ProtectedRoute'
+
+const Home = () => {
+  return(
+      <h1>home</h1>
+  )
+}
+
+const Profile = () => {
+  return(
+      <h1>Profile</h1>
+  )
+}
+const Login = () => {
+  return(
+      <h1>Login</h1>
+  )
+}
 
 function App() {
 
-  React.useEffect(() => {
-  fetch(`http://localhost:8000/api/status`)
-   .then((response) => console.log(response));
- }, []);
+  const [auth, setAuth] = React.useState(false);
+  const [token, setToken] = React.useState("");
 
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+      <AuthContext.Provider value={{ auth, setAuth }}>
+        <TokenContext.Provider value={{ token, setToken }}>
+        <Router>
+          <main className="App">
+            <Header/>
+            <Routes>
+                <Route element={<ProtectedRoute />}>
+                  <Route path="home" element={<Home />} />
+                  <Route path="profile" element={<Profile />} />
+                </Route>
+              <Route path='/login' element={<Login/>}/>
+            </Routes>
+          </main>
+          <StickyFooter/>
+        </Router>
+        </TokenContext.Provider>
+      </AuthContext.Provider>
+  )
 }
 
-export default App;
+export default App

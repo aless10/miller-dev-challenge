@@ -14,7 +14,7 @@ from app.repo import user as user_repo
 
 router = APIRouter()
 
-oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
+oauth2_scheme = OAuth2PasswordBearer(tokenUrl="api/token")
 
 # to get a string like this run:
 # openssl rand -hex 32
@@ -104,9 +104,16 @@ async def signup_for_access_token(
         form_data: Annotated[OAuth2PasswordRequestForm, Depends()],
         db_session: AsyncSession = Depends(get_session),
 ):
-    user = await user_repo.add_user(db_session, form_data.username, get_password_hash(form_data.password))
+    user = await user_repo.get_user(db_session, form_data.username)
+    if user:
+        raise HTTPException(
+            status_code=status.HTTP_409_CONFLICT,
+            detail="Username already exists: pick a different one",
+            headers={"WWW-Authenticate": "Bearer"},
+        )
+    await user_repo.add_user(db_session, form_data.username, get_password_hash(form_data.password))
     access_token_expires = timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
     access_token = create_access_token(
-        data={"sub": user.username}, expires_delta=access_token_expires
+        data={"sub": form_data.username}, expires_delta=access_token_expires
     )
     return {"access_token": access_token, "token_type": "bearer"}
