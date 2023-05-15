@@ -2,7 +2,7 @@ from fastapi import APIRouter
 
 from . import status, auth, car, share_request
 
-api_router = APIRouter()
+api_router = APIRouter(prefix="/api")
 api_router.include_router(
     status.router, prefix="/status", tags=["status"]
 )
