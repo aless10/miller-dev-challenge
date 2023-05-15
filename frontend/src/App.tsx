@@ -8,6 +8,8 @@ import StickyFooter from './components/Footer'
 import { AuthContext, TokenContext } from './Context';
 import Header from './components/Header'
 import ProtectedRoute from './components/ProtectedRoute'
+import Cookies from "js-cookie";
+import Login from './components/Login';
 
 const Home = () => {
   return(
@@ -20,16 +22,23 @@ const Profile = () => {
       <h1>Profile</h1>
   )
 }
-const Login = () => {
-  return(
-      <h1>Login</h1>
-  )
-}
 
 function App() {
 
   const [auth, setAuth] = React.useState(false);
   const [token, setToken] = React.useState("");
+
+  const readCookie = () => {
+    let token = Cookies.get("access_token");
+    if (token) {
+      setAuth(true);
+      setToken(token);
+    }
+  };
+  React.useEffect(() => {
+    readCookie();
+  }, []);
+
 
   return (
       <AuthContext.Provider value={{ auth, setAuth }}>
@@ -39,10 +48,10 @@ function App() {
             <Header/>
             <Routes>
                 <Route element={<ProtectedRoute />}>
-                  <Route path="home" element={<Home />} />
+                  <Route path="" element={<Home />} />
                   <Route path="profile" element={<Profile />} />
                 </Route>
-              <Route path='/login' element={<Login/>}/>
+              <Route path='/login' element={<Login />}/>
             </Routes>
           </main>
           <StickyFooter/>
