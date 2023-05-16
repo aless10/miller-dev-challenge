@@ -18,7 +18,7 @@ services:
     depends_on:
       - db
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:8000/status"]
+      test: ["CMD", "curl", "-f", "http://localhost:8000/api/status"]
       interval: 1m
       timeout: 10s
       retries: 3

@@ -14,7 +14,7 @@ from app.repo import user as user_repo
 
 router = APIRouter()
 
-oauth2_scheme = OAuth2PasswordBearer(tokenUrl="api/token")
+oauth2_scheme = OAuth2PasswordBearer(tokenUrl="api/login")
 
 # to get a string like this run:
 # openssl rand -hex 32

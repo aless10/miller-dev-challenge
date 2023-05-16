@@ -38,8 +38,8 @@ async def get_available_cars(db_session: AsyncSession, owner: str) -> list[Car]:
     )\
         .join(ShareRequestOrm)\
         .where(
-        ShareRequestOrm.owner != owner,
-        ShareRequest.status.not_in([RequestStatus.PENDING, RequestStatus.ACTIVE, RequestStatus.ACCEPTED])
+        CarOrm.owner != owner,
+        ShareRequestOrm.status.not_in([RequestStatus.PENDING, RequestStatus.ACTIVE, RequestStatus.ACCEPTED])
     )
     query_result = await db_session.execute(query)
     return [Car.from_orm(getattr(row, Car.__name__)) for row in query_result]

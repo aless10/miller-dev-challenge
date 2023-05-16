@@ -29,3 +29,21 @@ export const signup = async (username: string, password: string) => {
   });
   return await response.json();
 };
+
+export const getAvailableCars = async (token: string) => {
+  const response = await fetch(
+    "http://localhost:8000/api/requests/available-cars",
+    {
+      method: "GET", // *GET, POST, PUT, DELETE, etc.
+      mode: "cors", // no-cors, *cors, same-origin
+      cache: "no-cache", // *default, no-cache, reload, force-cache, only-if-cached
+      credentials: "same-origin", // include, *same-origin, omit
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+      redirect: "follow", // manual, *follow, error
+      referrerPolicy: "no-referrer", // no-referrer, *no-referrer-when-downgrade, origin, origin-when-cross-origin, same-origin, strict-origin, strict-origin-when-cross-origin, unsafe-url
+    }
+  );
+  return await response.json();
+};

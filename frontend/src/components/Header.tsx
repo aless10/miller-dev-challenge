@@ -6,9 +6,37 @@ import Cookies from "js-cookie";
 import {
   Navbar,
   Typography,
+  Popover,
+  PopoverHandler,
+  PopoverContent,
   Button,
   IconButton,
 } from "@material-tailwind/react";
+
+type Props = {
+  text: string;
+};
+
+function AlertButton({ text }: Props) {
+  return (
+    <Popover>
+      <PopoverHandler>
+        <Typography
+          as="li"
+          style={{ cursor: "pointer" }}
+          variant="small"
+          color="blue-gray"
+          className="p-1 font-normal"
+        >
+          {text}
+        </Typography>
+      </PopoverHandler>
+      <PopoverContent>
+        This is doing nothing at the moment. Sorry!
+      </PopoverContent>
+    </Popover>
+  );
+}
 
 export default function Header() {
   const [openNav, setOpenNav] = React.useState(false);
@@ -30,26 +58,8 @@ export default function Header() {
 
   const navList = (
     <ul className="mb-4 mt-2 flex flex-col gap-2 lg:mb-0 lg:mt-0 lg:flex-row lg:items-center lg:gap-6">
-      <Typography
-        as="li"
-        variant="small"
-        color="blue-gray"
-        className="p-1 font-normal"
-      >
-        <a href="#" className="flex items-center">
-          My Cars
-        </a>
-      </Typography>
-      <Typography
-        as="li"
-        variant="small"
-        color="blue-gray"
-        className="p-1 font-normal"
-      >
-        <a href="#" className="flex items-center">
-          My Requests
-        </a>
-      </Typography>
+      <AlertButton text={"My Cars"} />
+      <AlertButton text={"My Requests"} />
     </ul>
   );
 

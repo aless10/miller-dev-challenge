@@ -1,20 +1,14 @@
 // @ts-ignore
-import React, { Component, useContext } from 'react'
-// @ts-ignore
-import { Route, Navigate, Outlet } from 'react-router-dom'
-import { AuthContext } from '../Context';
-
-type Props = {
-  children: JSX.Element
-}
-
+import { useContext } from "react";
+import { Navigate, Outlet } from "react-router-dom";
+import { AuthContext } from "../Context";
 
 const ProtectedRoute = () => {
-  const { auth } = useContext(AuthContext)
+  const { auth } = useContext(AuthContext);
   if (!auth) {
     return <Navigate to="/login" replace />;
   }
-  return <Outlet></Outlet>
+  return <Outlet></Outlet>;
 };
 
-export default ProtectedRoute
+export default ProtectedRoute;

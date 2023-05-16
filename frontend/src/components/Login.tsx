@@ -7,7 +7,7 @@ import Cookies from "js-cookie";
 function Login() {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
-  const { token, setToken } = useContext(TokenContext);
+  const { setToken } = useContext(TokenContext);
   const { auth, setAuth } = useContext(AuthContext);
 
   const handleSubmit = async (
