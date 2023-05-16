@@ -18,6 +18,7 @@ function Login() {
     e.preventDefault();
     const response = await login(username, password);
     console.log(response);
+    if (response.access_token === undefined) return;
     setAuth(true);
     Cookies.set("access_token", response.access_token);
     setToken(response.access_token);

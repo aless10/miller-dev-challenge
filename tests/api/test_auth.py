@@ -7,7 +7,7 @@ async def test_signup_ok(app_client, db_session):
     username = 'newUser'
     password = 'passwordUser'
     response = app_client.post(
-        "/signup",
+        "/api/signup",
         data={"username": username, "password": password},
         headers={"Content-Type": "application/x-www-form-urlencoded"}
     )

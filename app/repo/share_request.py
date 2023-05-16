@@ -1,4 +1,4 @@
-from sqlalchemy import select, update, delete
+from sqlalchemy import select, update, delete, or_
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.model.share_request import ShareRequestOrm, ShareRequest, RequestStatus
@@ -7,7 +7,7 @@ from ..model.car import Car, CarOrm
 
 
 async def get_requests_as_owner(db_session: AsyncSession, owner: str) -> list[ShareRequest]:
-    query = select(ShareRequestOrm)\
+    query = select(ShareRequestOrm) \
         .join(CarOrm, CarOrm.license_plate == ShareRequestOrm.license_plate) \
         .where(CarOrm.owner == owner)
     query_result = await db_session.execute(query)
@@ -35,14 +35,17 @@ async def get_available_cars(db_session: AsyncSession, owner: str) -> list[Car]:
         CarOrm.daily_price,
         CarOrm.pick_up_place,
         CarOrm.put_down_place
-    )\
-        .join(ShareRequestOrm)\
+    ) \
+        .join(ShareRequestOrm, isouter=True) \
         .where(
         CarOrm.owner != owner,
-        ShareRequestOrm.status.not_in([RequestStatus.PENDING, RequestStatus.ACTIVE, RequestStatus.ACCEPTED])
+        or_(
+            ShareRequestOrm.status.not_in([RequestStatus.PENDING, RequestStatus.ACTIVE, RequestStatus.ACCEPTED]),
+            ShareRequestOrm.id.is_(None)
+            )
     )
     query_result = await db_session.execute(query)
-    return [Car.from_orm(getattr(row, Car.__name__)) for row in query_result]
+    return [Car.from_orm(row) for row in query_result]
 
 
 async def add_request(
